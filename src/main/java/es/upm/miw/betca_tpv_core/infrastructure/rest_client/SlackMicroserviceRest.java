@@ -21,7 +21,7 @@ public class SlackMicroserviceRest implements SlackMicroservice {
     private final WebClient.Builder webClientBuilder;
 
     @Autowired
-    public SlackMicroserviceRest(@Value("${miw.tpv.slack.url}") String slackUri, WebClient.Builder webClientBuilder) {
+    public SlackMicroserviceRest(@Value("${miw.healthtracker.repository}") String slackUri, WebClient.Builder webClientBuilder) {
         this.slackUri = slackUri;
         this.webClientBuilder = webClientBuilder;
     }
