@@ -20,7 +20,7 @@ jobs:
         if: success()
         run: >
           mvn -B verify -DskipTests sonar:sonar
-          -Dsonar.projectKey=es.upm.miw:healthtracker-fhir
+          -Dsonar.projectKey=healthtracker-platform_healthtracker-fhir
           -Dsonar.organization=healthtracker-platform
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.login=$SONAR_TOKEN
