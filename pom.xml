@@ -15,7 +15,7 @@
     <packaging>jar</packaging>
 
     <name>${project.groupId}.${project.artifactId}</name>
-    <description>TPV Application</description>
+
 
     <properties>
         <!-- Encode -->
@@ -34,7 +34,6 @@
         <jacoco.version>0.8.5</jacoco.version>
         <!-- various -->
         <jwt.version>3.18.2</jwt.version>
-        <itextpdf.version>7.0.2</itextpdf.version>
         <openapi.version>1.5.12</openapi.version>
     </properties>
     <dependencies>
@@ -45,7 +44,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>	
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-oauth2-client</artifactId>
+        </dependency>
         <!-- Web Asynchronous -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -79,22 +82,6 @@
             <groupId>com.auth0</groupId>
             <artifactId>java-jwt</artifactId>
             <version>${jwt.version}</version>
-        </dependency>
-        <!-- IText PDF -->
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>kernel</artifactId>
-            <version>${itextpdf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>layout</artifactId>
-            <version>${itextpdf.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>barcodes</artifactId>
-            <version>${itextpdf.version}</version>
         </dependency>
         <!-- Lombok -->
         <dependency>
