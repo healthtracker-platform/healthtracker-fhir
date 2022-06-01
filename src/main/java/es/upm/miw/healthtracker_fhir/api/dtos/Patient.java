@@ -1,4 +1,4 @@
-package es.upm.miw.healthtracker_fhir.data.model;
+package es.upm.miw.healthtracker_fhir.api.dtos;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,13 +11,11 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SlackPublication {
+public class Patient {
 
-    private String title;
-    private String name;
-    private String slackUsername;
     private String email;
-    private SlackPublicationCategory category;
-    private String message;
-
+    private String firstName;
+    private String familyName;
+    private String gender;
+    private String professional;
 }

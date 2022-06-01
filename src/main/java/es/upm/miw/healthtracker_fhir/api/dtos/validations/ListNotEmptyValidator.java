@@ -1,4 +1,4 @@
-package es.upm.miw.healthtracker_fhir.data.model.validations;
+package es.upm.miw.healthtracker_fhir.api.dtos.validations;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

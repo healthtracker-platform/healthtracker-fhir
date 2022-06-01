@@ -96,6 +96,12 @@
             <classifier>osx-aarch_64</classifier>
             <version>4.1.72.Final</version>
         </dependency>
+        <!-- FHIR R4 -->
+        <dependency>
+            <groupId>ca.uhn.hapi.fhir</groupId>
+            <artifactId>hapi-fhir-structures-r4</artifactId>
+            <version>4.1.0</version>
+        </dependency>
         <!-- ================ TEST ================== -->
         <!-- Spring Test -->
         <dependency>
