@@ -1,5 +1,6 @@
 package es.upm.miw.healthtracker_fhir.data;
 
+import es.upm.miw.healthtracker_fhir.data.FhirRepositoryMicroserviceRest;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Observation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,11 +14,12 @@ public class ObservationDao {
     private static final String CODE = "code=";
     private static final String AND = "&";
     private static final String PATIENT = "subject:Patient.name=";
+    private static final String SORTBYDATE = "_sort=-date";
 
-    private final RepositoryConnector repositoryConnector;
+    private final FhirRepositoryMicroserviceRest repositoryConnector;
 
     @Autowired
-    public ObservationDao(RepositoryConnector repositoryConnector) {
+    public ObservationDao(FhirRepositoryMicroserviceRest repositoryConnector) {
         this.repositoryConnector = repositoryConnector;
     }
 
@@ -28,7 +30,7 @@ public class ObservationDao {
     public Bundle getObservationsByCode(String code, String name) {
         String query = null;
         if(code != null){
-            query = OBSERVATION + SEARCH + CODE + code + AND + PATIENT + name.replace(" ","%20");
+            query = OBSERVATION + SEARCH + CODE + code + AND + PATIENT + name.replace(" ","%20")+ AND + SORTBYDATE;
         }
         return this.repositoryConnector.search(query);
     }

@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 
 
 @Service("fhirClient")
-public class RepositoryConnector {
+public class FhirRepositoryMicroserviceRest {
 
-  private static final Logger logger = LoggerFactory.getLogger(RepositoryConnector.class);
+  private static final Logger logger = LoggerFactory.getLogger(FhirRepositoryMicroserviceRest.class);
 
   private String url;
   private  FhirContext ctx;
@@ -28,7 +28,7 @@ public class RepositoryConnector {
 
 
   @Autowired
-  public RepositoryConnector(@Value("${miw.healthtracker.repo}") String url, AzureFhirMicroserviceRest azureFhirMicroserviceRest) {
+  public FhirRepositoryMicroserviceRest(@Value("${miw.healthtracker.repo}") String url, AzureActiveDirectoryMicroserviceRest azureFhirMicroserviceRest) {
     this.ctx = FhirContext.forR4(); // Expensive
     logger.info("Repository endpoint: {}", url);
     IRestfulClientFactory clientFactory = ctx.getRestfulClientFactory();

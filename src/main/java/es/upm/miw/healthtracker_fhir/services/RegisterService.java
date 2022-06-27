@@ -1,10 +1,10 @@
 package es.upm.miw.healthtracker_fhir.services;
 import es.upm.miw.healthtracker_fhir.api.dtos.Patient;
-import es.upm.miw.healthtracker_fhir.api.dtos.Professional;
 import es.upm.miw.healthtracker_fhir.api.dtos.Register;
 import es.upm.miw.healthtracker_fhir.data.ObservationDao;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,19 +19,22 @@ public class RegisterService {
     public static final String WEIGHT_CODE = "726527001";
     public static final String WAIST_DIAMETER_CODE = "276361009";
     public static final String EMOTION_CODE = "285854004";
+    private final String system;
     private final ObservationDao obervationDao;
     private final PatientService patientService;
 
     @Autowired
-    public RegisterService(ObservationDao obervationDao, PatientService patientService ) {
+    public RegisterService(ObservationDao obervationDao, PatientService patientService, @Value("${miw.azure.resource}") String resource ) {
         this.obervationDao = obervationDao;
         this.patientService = patientService;
+        this.system = resource;
     }
 
     public Mono<String> createRegister(Register register) {
         Patient patient = this.patientService.getPatientByNameNullSafe(register.getName()).block();
         org.hl7.fhir.r4.model.Observation observation = new org.hl7.fhir.r4.model.Observation();
-        observation.setSubject(new Reference(patient.getId().replace("http://localhost:8080/fhir","")));
+        observation.setStatus(Observation.ObservationStatus.FINAL);
+        observation.setSubject(new Reference(patient.getId().replace(this.system,"")));
         observation.setEffective(new DateTimeType(new Date()));
         if(register.getType().equals("weight")){
             Coding codeWeight = new Coding().setSystem("http://snomed.info/sct").setCode(WEIGHT_CODE).setDisplay("Weight");
@@ -59,13 +62,13 @@ public class RegisterService {
         }
         String id = this.obervationDao.createObservation(observation);
 
-        return Mono.just(id);
+        return Mono.empty();
     }
 
     public Flux<Register> getWeightRegisters(String name) {
         List<Register> list = new ArrayList<>();
         Bundle bundle =  this.obervationDao.getObservationsByCode(WEIGHT_CODE, name);
-        if (bundle.getTotal()>0){
+        if (bundle.getEntry().size()>0){
             bundle.getEntry().stream()
                     .forEach(entry->{
                         org.hl7.fhir.r4.model.Observation observation = (org.hl7.fhir.r4.model.Observation) entry.getResource();
@@ -78,7 +81,7 @@ public class RegisterService {
     public Flux<Register> getWaistRegisters(String name) {
         List<Register> list = new ArrayList<>();
         Bundle bundle =  this.obervationDao.getObservationsByCode(WAIST_DIAMETER_CODE, name);
-        if (bundle.getTotal()>0){
+        if (bundle.getEntry().size()>0){
             bundle.getEntry().stream()
                     .forEach(entry->{
                         org.hl7.fhir.r4.model.Observation observation = (org.hl7.fhir.r4.model.Observation) entry.getResource();
@@ -91,7 +94,7 @@ public class RegisterService {
     public Flux<Register> getEmotionRegisters(String name) {
         List<Register> list = new ArrayList<>();
         Bundle bundle =  this.obervationDao.getObservationsByCode(EMOTION_CODE, name);
-        if (bundle.getTotal()>0){
+        if (bundle.getEntry().size()>0){
             bundle.getEntry().stream()
                     .forEach(entry->{
                         org.hl7.fhir.r4.model.Observation observation = (org.hl7.fhir.r4.model.Observation) entry.getResource();

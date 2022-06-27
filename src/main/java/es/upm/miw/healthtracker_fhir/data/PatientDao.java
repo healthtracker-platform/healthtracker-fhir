@@ -1,6 +1,7 @@
 package es.upm.miw.healthtracker_fhir.data;
 
 
+import es.upm.miw.healthtracker_fhir.data.FhirRepositoryMicroserviceRest;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Patient;
 
@@ -19,10 +20,10 @@ public class PatientDao {
     private static final String NAME = "name=";
     private static final String AND = "&";
     private static final String ACTIVE = "active=true";
-    private final RepositoryConnector repositoryConnector;
+    private final FhirRepositoryMicroserviceRest repositoryConnector;
 
     @Autowired
-    public PatientDao(RepositoryConnector repositoryConnector) {
+    public PatientDao(FhirRepositoryMicroserviceRest repositoryConnector) {
         this.repositoryConnector = repositoryConnector;
     }
 

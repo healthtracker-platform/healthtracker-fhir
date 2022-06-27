@@ -12,10 +12,10 @@ public class PractitionerDao {
     private static final String NAME = "name=";
     private static final String AND = "&";
     private static final String ACTIVE = "active=true";
-    private final RepositoryConnector repositoryConnector;
+    private final FhirRepositoryMicroserviceRest repositoryConnector;
 
     @Autowired
-    public PractitionerDao(RepositoryConnector repositoryConnector) {
+    public PractitionerDao(FhirRepositoryMicroserviceRest repositoryConnector) {
         this.repositoryConnector = repositoryConnector;
     }
 

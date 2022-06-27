@@ -1,20 +1,16 @@
 package es.upm.miw.healthtracker_fhir.data;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.concurrent.ExecutionException;
 
 @Service("azureClient")
-public class AzureFhirMicroserviceRest {
+public class AzureActiveDirectoryMicroserviceRest {
 
     private final String azureUrl;
     private final String azureResource;
@@ -23,11 +19,11 @@ public class AzureFhirMicroserviceRest {
     private final WebClient.Builder webClientBuilder;
 
     @Autowired
-    public AzureFhirMicroserviceRest(@Value("${miw.azure.url}") String url,
-                                     @Value("${miw.azure.resource}") String resource,
-                                     @Value("${miw.azure.id}") String clientId,
-                                     @Value("${miw.azure.secret}") String clientSecret,
-                                     WebClient.Builder webClientBuilder) {
+    public AzureActiveDirectoryMicroserviceRest(@Value("${miw.azure.url}") String url,
+                                                @Value("${miw.azure.resource}") String resource,
+                                                @Value("${miw.azure.id}") String clientId,
+                                                @Value("${miw.azure.secret}") String clientSecret,
+                                                WebClient.Builder webClientBuilder) {
         this.azureUrl = url;
         this.azureResource = resource;
         this.azureClient = clientId;

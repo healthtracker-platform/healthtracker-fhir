@@ -4,6 +4,7 @@ import es.upm.miw.healthtracker_fhir.data.PatientDao;
 import es.upm.miw.healthtracker_fhir.api.dtos.Patient;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,12 +16,13 @@ import java.util.List;
 @Service
 public class PatientService {
 
-    private final static String SYSTEM = "https://tfm.azurehealthcareapis.com";
+    private final String system;
     private final PatientDao patientDao;
 
     @Autowired
-    public PatientService(PatientDao patientDao) {
+    public PatientService(PatientDao patientDao, @Value("${miw.azure.resource}") String resource) {
         this.patientDao = patientDao;
+        this.system = resource;
     }
 
     public Mono<String> createPatient(Patient patient) {
@@ -39,7 +41,7 @@ public class PatientService {
         fhirPatient.setActive(true);
 
         //Reference
-        fhirPatient.addGeneralPractitioner(new Reference(patient.getProfessional().replace(SYSTEM,"")));
+        fhirPatient.addGeneralPractitioner(new Reference(patient.getProfessional().replace(this.system,"")));
 
         String id = this.patientDao.createPatient(fhirPatient);
 
