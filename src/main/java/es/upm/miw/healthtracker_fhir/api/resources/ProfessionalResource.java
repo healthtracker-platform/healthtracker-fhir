@@ -1,11 +1,14 @@
 package es.upm.miw.healthtracker_fhir.api.resources;
 
 import es.upm.miw.healthtracker_fhir.api.Rest;
+import es.upm.miw.healthtracker_fhir.api.dtos.Patient;
 import es.upm.miw.healthtracker_fhir.api.dtos.Professional;
 import es.upm.miw.healthtracker_fhir.api.dtos.ProfessionalNameDto;
 import es.upm.miw.healthtracker_fhir.services.ProfessionalService;
+import org.hl7.fhir.instance.model.api.IIdType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Rest
@@ -25,7 +28,7 @@ public class ProfessionalResource {
     }
 
     @PostMapping()
-    public Mono<Void> createProfessional(@RequestBody Professional professional) {
+    public Mono<String> createProfessional(@RequestBody Professional professional) {
         return this.professionalService.createProfessional(professional);
     }
 
@@ -37,5 +40,11 @@ public class ProfessionalResource {
     @GetMapping(SEARCH)
     public Mono<Professional> getProfessionalByNameNullSafe(@RequestParam(required = false) String name) {
         return this.professionalService.getProfessionalByNameNullSafe(name);
+    }
+
+    @GetMapping()
+    public Flux<Professional> getProfessionals()
+    {
+        return this.professionalService.getProfessionals();
     }
 }

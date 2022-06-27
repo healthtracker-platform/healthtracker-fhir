@@ -1,12 +1,12 @@
 package es.upm.miw.healthtracker_fhir.services;
 
-import ca.uhn.fhir.context.FhirContext;
 import es.upm.miw.healthtracker_fhir.api.dtos.ProfessionalNameDto;
-import es.upm.miw.healthtracker_fhir.data.ProfessionalMicroserviceRest;
+import es.upm.miw.healthtracker_fhir.data.PractitionerDao;
 import es.upm.miw.healthtracker_fhir.api.dtos.Professional;
 import org.hl7.fhir.r4.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
@@ -15,15 +15,16 @@ import java.util.List;
 @Service
 public class ProfessionalService {
 
-    private final ProfessionalMicroserviceRest professionalMicroservice;
+    private final PractitionerDao professionalDao;
 
     @Autowired
-    public ProfessionalService(ProfessionalMicroserviceRest professionalMicroservice) {
-        this.professionalMicroservice = professionalMicroservice;
+    public ProfessionalService(PractitionerDao professionalDao) {
+        this.professionalDao = professionalDao;
     }
 
-    public Mono<Void> createProfessional(Professional professional) {
+    public Mono<String> createProfessional(Professional professional) {
         org.hl7.fhir.r4.model.Practitioner fhirPractitioner = new org.hl7.fhir.r4.model.Practitioner();
+
         //First Name and Family Name
         fhirPractitioner.addName(new HumanName().addGiven(professional.getFirstName()).setFamily(professional.getFamilyName()).setText(professional.getFirstName()+ " " +professional.getFamilyName()));
 
@@ -33,34 +34,47 @@ public class ProfessionalService {
         //E-mail
         fhirPractitioner.addTelecom(new ContactPoint().setValue(professional.getEmail()));
 
-        return this.professionalMicroservice.createProfessional(fhirPractitioner);
+        //Active
+        fhirPractitioner.setActive(true);
+
+        String id = this.professionalDao.createPractitioner(fhirPractitioner);
+
+        return Mono.empty();
     }
 
-
     public Mono<ProfessionalNameDto> getProfessionalNamesByNameNullSafe(String name) {
-
-      return this.professionalMicroservice.getProfessionalsByNameNullSafe(name)
-                .map(bundleString-> {
-                    List list = new ArrayList<String>();
-                   Bundle bundle = FhirContext.forR4().newJsonParser().parseResource(Bundle.class, bundleString);
-                   bundle.getEntry().stream().forEach(entry->{
-                      Practitioner practitioner = (Practitioner) entry.getResource();
-                     list.add(practitioner.getName().get(0).getText());
-                   });
-                   return new ProfessionalNameDto(list);
+        List<String> list = new ArrayList<>();
+        Bundle bundle = this.professionalDao.getPractitionersByNameNullSafe(name);
+        bundle.getEntry().stream()
+                .forEach(entry->{
+                    Practitioner practitioner = (Practitioner)  entry.getResource();
+                    list.add(practitioner.getName().get(0).getText());
                 });
+        return Mono.just(new ProfessionalNameDto(list));
     }
 
     public Mono<Professional> getProfessionalByNameNullSafe(String name) {
-        return this.professionalMicroservice.getProfessionalsByNameNullSafe(name)
-                .map(bundleString-> {
-                    List<Practitioner> list = new ArrayList<>();
-                    Bundle bundle = FhirContext.forR4().newJsonParser().parseResource(Bundle.class, bundleString);
-                    bundle.getEntry().stream().forEach(entry->{
-                        Practitioner practitioner = (Practitioner) entry.getResource();
-                        list.add(practitioner);
-                    });
-                    return Professional.ofPractitioner(list.get(0));
+        List<Practitioner> list = new ArrayList<>();
+        Bundle bundle = this.professionalDao.getPractitionersByNameNullSafe(name);
+        bundle.getEntry().stream()
+                .forEach(entry->{
+                    Practitioner practitioner = (Practitioner) entry.getResource();
+                    list.add(practitioner);
                 });
+        return Mono.just(Professional.ofPractitioner(list.get(0)));
     }
+
+    public Flux<Professional> getProfessionals() {
+        List<Professional> list = new ArrayList<>();
+        Bundle bundle =  this.professionalDao.getPractitioners();
+        if (bundle.getEntry().size()>0){
+            bundle.getEntry().stream()
+                    .forEach(entry->{
+                        org.hl7.fhir.r4.model.Practitioner practitioner = (org.hl7.fhir.r4.model.Practitioner) entry.getResource();
+                        list.add(Professional.ofPractitioner(practitioner));
+                    });
+        }
+        return Mono.just(list).flatMapMany(Flux::fromIterable);
+    }
+
 }

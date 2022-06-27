@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 
-@PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER') or hasRole('OPERATOR')")
+@PreAuthorize("hasRole('ADMIN') or hasRole('PROFESSIONAL') or hasRole('PATIENT')")
 @RestController
 @SecurityRequirement(name = "bearerAuth")
 public @interface Rest {
